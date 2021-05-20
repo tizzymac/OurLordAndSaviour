@@ -3,13 +3,20 @@
 cmake_minimum_required(VERSION 3.18.3)
 
 # Set up project name
-project(OLAS)
+project(OLAS VERSION 1.0)
+
+# Setup files to hold version
+configure_file(OLASConfig.h.in OLASConfig.h)
 
 # actually build something:
 # build into an object called whatever the project name is
 add_executable(${PROJECT_NAME} 
     main.cpp
 )
+
+# The binary dir is where we write OLAS_Config.h out to
+# This will have the version number
+target_include_directories(${PROJECT_NAME} PUBLIC ${PROJECT_BINARY_DIR})
 
 # Download all the submodules
 find_path(Git QUIET)
@@ -30,7 +37,7 @@ if (GIT_FOUND AND EXISTS ${PROJECT_SOURCE_DIR}/.git)
 endif()
 
 # Check all the submodules (make sure they exist)
-if (NOT_EXISTS ${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt)
+if (NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt)
     message(FATAL_ERROR "The glfw submodule was not downloaded!")
 endif()
 
