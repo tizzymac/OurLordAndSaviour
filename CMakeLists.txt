@@ -13,17 +13,23 @@ add_executable(${PROJECT_NAME}
 
 # Build the Adder library
 add_subdirectory(Adder)
+# Build the glfw library
+add_subdirectory(external/glfw)
 
 target_include_directories(${PROJECT_NAME}
-    PRIVATE
+    PUBLIC
         Adder
+        external/glfw/include
 )
 
 # Specify where to find the Adder library
+# paths from the build folder
 target_link_directories(${PROJECT_NAME} 
-    PRIVATE
+    PUBLIC
         Adder
+        external/glfw/src
 )
 
 # link that library to our executable
-target_link_libraries(${PROJECT_NAME} adder)
+# leave off "lib" prefix and ".a" extension
+target_link_libraries(${PROJECT_NAME} adder glfw)
