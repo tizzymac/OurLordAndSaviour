@@ -5,7 +5,21 @@ cmake_minimum_required(VERSION 3.18.3)
 # Set up project name
 project(OLAS VERSION 1.0)
 
-# Setup files to hold version
+### ADDER STUFF
+# Option for weather or not to use the Adder lib
+option(USE_ADDER "A simple library for adding two ints." ON)
+
+if (USE_ADDER)
+    # Build the Adder library
+    add_subdirectory(Adder)
+
+    list(APPEND EXTRA_LIBS Adder)
+    list(APPEND EXTRA_INCLUDES ${PROJECT_SOURCE_DIR}/Adder)
+
+endif()
+###
+
+# Setup config files
 configure_file(OLASConfig.h.in OLASConfig.h)
 
 # actually build something:
@@ -41,25 +55,25 @@ if (NOT EXISTS ${PROJECT_SOURCE_DIR}/external/glfw/CMakeLists.txt)
     message(FATAL_ERROR "The glfw submodule was not downloaded!")
 endif()
 
-# Build the Adder library
-add_subdirectory(Adder)
 # Build the glfw library
 add_subdirectory(external/glfw)
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
-        Adder
         external/glfw/include
+        ${EXTRA_INCLUDES}
 )
 
-# Specify where to find the Adder library
 # paths from the build folder
 target_link_directories(${PROJECT_NAME} 
     PUBLIC
-        Adder
         external/glfw/src
+        ${EXTRA_LIBS}
 )
 
 # link that library to our executable
 # leave off "lib" prefix and ".a" extension
-target_link_libraries(${PROJECT_NAME} adder glfw)
+target_link_libraries(${PROJECT_NAME} 
+    glfw
+    ${EXTRA_LIBS}
+)
